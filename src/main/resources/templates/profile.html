@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${sectionName}"></title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/community.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/d9c963b68a.js" crossorigin="anonymous"></script></head>
+
+<body>
+<div th:insert="navigation :: nav"></div>
+
+<div class="container">
+    <div class="card border-0 shadow my-5">
+        <div class="card-body p-5">
+            <div class = "row">
+                <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                    <h3><span aria-hidden="true" th:class="${section == 'question'} ? 'far fa-question-circle' : 'far fa-comment-dots'"></span> &nbsp;<span th:text="${sectionName}"></span></h3>
+                    <hr>
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'question'}">
+                        <ul class="list-unstyled">
+                            <li class="media" th:each="question: ${pagination.data}">
+                                <img class="mr-3 avatar-list rounded" th:src="${question.user.avatarUrl}" alt="Generic placeholder image">
+                                <div class="media-body" style="padding-bottom: 10px;">
+                                    <h5 class="mt-0 mb-1">
+                                        <a th:href="@{'/question/' + ${question.id}}" th:text="${question.title}" class="ex1"></a>
+                                    </h5>
+                                    <span th:text="${question.description}" class="limit-box"></span>
+                                    <span class="thumbnail-text"><span th:text="${question.commentCount}"></span> Replies • <span th:text="${question.viewCount}"></span> Views • <span th:text="${#dates.format(question.gmtCreate, 'dd MMMM yyyy')}"></span> </span>
+                                </div>
+                            </li>
+                        </ul>
+
+                    </div>
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'replies'}">
+                        <div class="media" th:each="notification : ${pagination.data}">
+                            <div class="media-body">
+                                <h6 class="media-heading">
+                                    <span>
+                                        <span th:text="${notification.notifierName} + ' '"></span>
+                                        <span th:text="${notification.typeName} + ' '" th:style="${notification.typeName == ' Replied to Comment '} ? 'color: #155faa;' : 'color: darkgreen;'"></span>
+                                        <a th:href="@{'/notification/' + ${notification.id}}" th:text="${notification.outerTitle}"></a>
+                                    </span>
+                                    <span class="badge badge-warning badge-pill" th:if="${notification.status == 0}">Unread</span>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li th:if="${pagination.showFirstPage}" class="page-item">
+                                <a href="/profile/question/?page=1" aria-label="First" class="page-link">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li th:if="${pagination.showPrevious}" class="page-item">
+                                <a th:href="@{/profile/{section}/(page=${pagination.page - 1}, section=${section})}" aria-label="Previous" class="page-link">
+                                    <span aria-hidden="true">&lt;</span>
+                                </a>
+                            </li>
+                            <li th:each="page : ${pagination.pages}" th:class="${pagination.page == page} ? 'page-item active' : 'page-item'">
+                                <a th:href="@{/profile/{section}/(page=${pagination.totalPage}, section=${section})}" th:text="${page}" class="page-link">
+
+                                </a>
+                            </li>
+                            <li th:if="${pagination.showNext}" class="page-item">
+                                <a th:href="@{/profile/{section}/(page=${pagination.page + 1}, section=${section})}" aria-label="Next" class="page-link">
+                                    <span aria-hidden="true">&gt;</span>
+                                </a>
+                            </li>
+                            <li th:if="${pagination.showEndPage}" class="page-item">
+                                <a th:href="@{/profile/{section}/(page=${pagination.totalPage}, section=${section})}" aria-label="end" class="page-link">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </nav>
+
+                </div>
+                <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="list-group">
+                            <a href="/profile/question" th:class="${section == 'question'} ? 'list-group-item list-group-item-action active' : 'list-group-item list-group-item-action'">
+                                My Questions
+                            </a>
+                            <a href="/profile/replies" th:class="${section == 'replies'} ? 'list-group-item list-group-item-action active' : 'list-group-item list-group-item-action d-flex justify-content-between align-items-center'">
+                                Replies
+                                <span class="badge badge-light badge-pill" style="float:right;" th:text="${unreadCount}"></span>
+                            </a>
+                        </div>
+
+                        <a href="https://github.com/marketplace/azure-pipelines">
+                            <img class="img-thumbnail" src="/img/ads.png" style="margin-top: 10px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div th:insert="~{footer :: footer}"></div>
+
+</body>
+</html>

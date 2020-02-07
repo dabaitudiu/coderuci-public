@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CoderUCI</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/community.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/d9c963b68a.js" crossorigin="anonymous"></script>
+    <script src="/js/community.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <link rel="stylesheet"
+          href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/default.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+</head>
+<body>
+    <div th:insert="navigation :: nav"></div>
+
+    <div class="container">
+        <div class="card border-0 shadow my-5">
+            <div class="card-body p-5">
+                <div class = "row">
+                    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+                        <h2><span class="fas fa-pen" aria-hidden="true"></span>  Add Question</h2>
+                        <hr>
+                        <div class="alert alert-danger col-lg 9 col-md-12 col-sm-12 col-xs-12" th:text="${error}" th:if="${error != null}"></div>
+                        <form action="/publish" method="post">
+                            <input type="hidden" name="id" th:value="${id}">
+                            <div class="form-group">
+                                <label for="title">Question Title</label>
+                                <input type="text" class="form-control" th:value="${title}" id="title" name="title" placeholder="Question Title..." autocomplete="off" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Question Content</label>
+                                <textarea name="description" id="description" th:text="${description}" cols="30" rows="10" class="form-control"></textarea>
+                                <script>var simplemde = new SimpleMDE({spellChecker:false, renderingConfig: {
+                                        codeSyntaxHighlighting: true
+                                    }});</script>
+                            </div>
+                            <div class="form-group">
+                                <label for="tag">Add Label:</label>
+                                <input type="text" class="form-control" th:value="${tag}" id="tag" name="tag"
+                                       placeholder="Tags:use comma to split" autocomplete="off" onclick="showTagList()" required>
+
+                                <div id="taglist" style="display: none" class="taglist">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item" th:each="tagPage : ${tags}">
+                                            <a class="nav-link" th:id="${tagPage + '-tab'}" data-toggle="tab" th:href="${'#'+tagPage.getCategoryName()}" role="tab" style="padding:.3rem .5rem;" th:text="${tagPage.getCategoryName()}"></a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane fade" th:id="${tagPage.getCategoryName()}" role="tabpanel" th:each="tagPage : ${tags}">
+                                            <span th:each="subTag : ${tagPage.getTags()}" style="margin-left: 6px;font-size: 1rem;">
+                                                <span class="badge badge-info tag-icon" aria-hidden="true" onclick="selectTag(this)" th:data-tag="${subTag}" th:text="${subTag}"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <button type="submit" class="btn btn-success btn-publish">Publish</button>
+                        </form>
+                    </div>
+                    <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <h3>Rules for Publish</h3>
+                        • Question Title: Please use concise words to describe your question and no more than 25 words.<br>
+                        • Question Content: Add detailed contents to support your question<br>
+                        • Question Label: Choose one or more appropriate labels and use comma to split.<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:insert="~{footer :: footer}"></div>
+
+</body>
+</html>
+

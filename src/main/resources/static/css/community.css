@@ -1,0 +1,167 @@
+body {
+    background: url('/img/background.jpeg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+.main {
+     margin: 30px;
+     background-color: white;
+ }
+.btn-publish {
+    float:right;
+    margin-bottom: 15px;
+}
+
+.form-inline { width: 150% !important}
+
+.avatar-list {
+    width: 50px;
+    height: 50px;
+}
+
+.thumbnail-text {
+    font-size: 12px;
+    font-weight: normal;
+    color: #999;
+}
+
+.community-menu {
+    font-size: 13px;
+    color:#999;
+    float:right;
+    margin: 0 5px;
+}
+
+.media-body {
+    padding-top:0;
+    margin-left:-5px;
+}
+
+.comment-form {
+    margin: 15px 0;
+}
+
+.btn-comment {
+    float: right;
+    margin-bottom: 10px;
+}
+
+.comments {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.menu .active {
+    color:#499ef3
+}
+
+.shine {
+    color: #499ef3;
+}
+
+.sub-comment-user {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.sub-comment-text {
+    font-size: 0.7rem;
+}
+
+.limit-box {
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+    color: rgba(92,92,92,0.87);
+}
+
+.question-related {
+    line-height: 20px;
+    font-size: 14px;
+    margin-left: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+a.ex1 {
+    color:#155faa;
+}
+
+a.ex1:hover {
+    color:#428bca;
+    text-decoration: none;
+}
+
+.my-border {
+    border-right: 1px solid #eee;
+}
+
+.taglist {
+    display:none;
+    font-size: .8rem;
+    padding: 10px 30px 60px;
+    background-color: #f8f8f8;
+    margin-top: 15px;
+    border-radius: .5rem;
+}
+
+.tag-icon {
+    font-size: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.footer {
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    /*background-color: #f5f5f5;*/
+}
+
+.social-icon {
+    color:antiquewhite;
+    cursor:pointer;
+}
+
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 480px) {
+    .mobile-inactive {
+        display: none;
+    }
+}
+
+
+@media only screen
+and (min-device-width : 480px) {
+    .pc-inactive {
+        display: none;
+    }
+}
+
+.mobile-title {
+    font-family: 'Kelly Slab', cursive;
+    color: #494f54;
+    font-size:30px;
+}
+
+.mobile-tags {
+    display: block;
+}
+
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 480px) {
+    .mobile-tags {
+        display: inline;
+        margin-left: 10px;
+    }
+}

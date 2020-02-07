@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CoderUCI</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">-->
+    <link rel="stylesheet" href="css/community.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/d9c963b68a.js" crossorigin="anonymous"></script>
+</head>
+<script type="application/javascript">
+    window.onload = function () {
+        var closable = window.localStorage.getItem("closable");
+        if (closable == "true") {
+            window.close();
+            window.localStorage.removeItem("closable");
+        }
+    }
+</script>
+<body>
+    <div th:insert="navigation :: nav"></div>
+
+    <div class="container">
+        <div class="card border-0 shadow my-5">
+            <div class="card-body p-5">
+                <div class = "row">
+                    <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 my-border">
+                        <h2 class="mobile-title"><span class="fas fa-list" aria-hidden="true"></span>  Discover</h2>
+                        <hr>
+                        <div class="media" th:each="question: ${pagination.data}" style="margin-top: 15px; border-bottom: 1px solid #f5f5f5;">
+                            <img class="mr-3 avatar-list rounded" th:src="${question.user.avatarUrl}" alt="Generic placeholder image">
+                            <div class="media-body" style="padding-bottom: 10px;">
+                                <h5 class="mt-0 mb-1">
+                                    <a th:href="@{'question/' + ${question.id}}" th:text="${question.title}" class="ex1"></a>
+                                </h5>
+                                <span th:each="tag : ${question.tag.split(';')}">
+                                    <span class="badge badge-info" th:text="${tag}" style="margin-bottom: 5px;"></span>
+                                </span>
+                                <span th:text="${question.description}" class="limit-box"></span>
+                                <span class="thumbnail-text"><span th:text="${question.commentCount}"></span> Replies • <span th:text="${question.viewCount}"></span> Views • <span th:text="${#dates.format(question.gmtCreate, 'dd MMMM yyyy')}"></span> </span>
+                            </div>
+                        </div>
+
+                        <nav aria-label="Page navigation example" style="margin-top: 20px; float:right;">
+                            <ul class="pagination">
+                                <li th:if="${pagination.showFirstPage}" class="page-item">
+                                    <a th:href="@{/(page=1, search=${search})}" aria-label="First" class="page-link">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li th:if="${pagination.showPrevious}" class="page-item">
+                                    <a th:href="@{/(page=${pagination.page - 1}, search=${search})}" aria-label="Previous" class="page-link">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                </li>
+                                <li th:each="page : ${pagination.pages}" th:class="${pagination.page == page} ? 'page-item active' : 'page-item'">
+                                    <a th:href="@{/(page=${page}, search=${search})}" th:text="${page}" class="page-link">
+
+                                    </a>
+                                </li>
+                                <li th:if="${pagination.showNext}" class="page-item">
+                                    <a th:href="@{/(page=${pagination.page + 1}, search=${search})}" aria-label="Next" class="page-link">
+                                        <span aria-hidden="true">&gt;</span>
+                                    </a>
+                                </li>
+                                <li th:if="${pagination.showEndPage}" class="page-item">
+                                    <a th:href="@{/(page=${pagination.totalPage}, search=${search})}" aria-label="end" class="page-link">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <h3 class="mobile-title">Hot Topics</h3>
+                        <hr>
+                        <div>
+                            <a th:each="hot : ${hots}" th:href="@{/(page=1, search=${hot.getName()})}" class="ex1">
+                                <span class="mobile-tags">
+                                    <span class="badge badge-warning" th:text="${hot.getName()}" style="margin-bottom: 5px;"></span>
+                                    <span class="badge badge-danger" th:text="' heat: ' + ${hot.getPriority()}" style="margin-bottom: 5px;"></span>
+                                </span>
+                            </a>
+                        </div>
+
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div th:insert="~{footer :: footer}"></div>
+</body>
+</html>

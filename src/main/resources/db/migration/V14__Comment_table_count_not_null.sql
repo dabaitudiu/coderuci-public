@@ -1,0 +1,1 @@
+alter table comment modify comment_count int default 0 not null;

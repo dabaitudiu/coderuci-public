@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://fonts.googleapis.com/css?family=Kelly+Slab&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div th:fragment="nav">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light static-top mb-5 shadow">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <img alt="Brand" style="max-width:60px;margin-top:-7px;" src="/img/logo-1.png">
+                </a>
+                <span class="pc-inactive mobile-title">
+                    CoderUCI
+                </span>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" aria-disabled="true">Explore</a>
+                        </li>
+                        <li class="nav-item mobile-inactive">
+                            <form class="my-2 my-lg-0 form-inline" style="margin-top:5px !important;" action="/" method="get">
+                                <input class="form-control form-control-sm mr-sm-2" type="search" placeholder="Search a question.." aria-label="Search" name="search">
+                                <button class="btn btn-outline-success btn-sm" type="submit">Search</button>
+                            </form>
+                        </li>
+                    </ul>
+
+                    <a href="/profile/replies" class="mobile-inactive"><button type="button" class="btn btn-outline-info btn-sm" style="margin-right: 10px;"><i class="fa fa-bell-o"></i> Notifications <span class="badge badge-warning badge-pill" th:text="${session.unreadCount}"></span></button></a>
+                    <a href="/publish" class="mobile-inactive"><button type="button" class="btn btn-outline-success btn-sm" style="margin-right: 10px;"><i class="fas fa-feather"></i> publish </button></a>
+
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="nav-item dropdown" th:if="${session.user != null}">
+                            <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false" th:text="${session.user.getName()}"><span class="caret"></span></a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/publish"><i class="fas fa-feather" style="color: #28a745;"></i> &nbsp; Publish</a>
+                                <a class="dropdown-item" href="profile/replies"> <i class="fa fa-bell-o" style="color: #17a2b8;"></i>  &nbsp; Notifications <span class="badge badge-warning badge-pill" th:text="${session.unreadCount}"></span></a>
+                                <a class="dropdown-item" href="/profile/question"><i class="fas fa-book"></i>  &nbsp; My Questions</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> &nbsp; Log out</a>
+                            </div>
+                        </li>
+                        <li class="nav-item" th:if="${session.user == null}">
+<!--                            <a class="nav-link" href="https://github.com/login/oauth/authorize?client_id=594bafe71575c61e9eec&redirect_uri=http://localhost:8666/callback&scope=user&state=1">Login</a>-->
+                            <a class="nav-link" th:href="@{https://github.com/login/oauth/authorize(client_id='594bafe71575c61e9eec',redirect_uri=${#httpServletRequest.getRequestURL()+'callback'},scope='user',state=1)}">Sign in</a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+    </div>
+</body>
+</html>

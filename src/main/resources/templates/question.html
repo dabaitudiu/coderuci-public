@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${question.title}"></title>
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/community.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/d9c963b68a.js" crossorigin="anonymous"></script>
+    <script src="/js/community.js" type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!--    <script src="https://requirejs.org/docs/release/2.3.6/minified/require.js" type="application/javascript"></script>-->
+    <link rel="stylesheet"
+          href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/default.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+<div th:insert="navigation :: nav"></div>
+
+<div class="container">
+    <div class="card border-0 shadow my-5">
+        <div class="card-body p-5">
+            <div class="row">
+                <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 my-border" >
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="comment_section">
+
+                        <h4><span th:text="${question.title}"></span></h4>
+                        <span class="thumbnail-text">
+                        Author: <span th:text="${question.user.name}"></span> |
+                        Published Date: <span th:text="${#dates.format(question.gmtCreate, 'yyyy-MM-dd')}"></span> |
+                        Views: <span th:text="${question.viewCount}"></span>
+                        <a th:href="@{'/publish/' + ${question.id}}" class="community-menu"
+                           th:if="${session.user != null && session.user.id == question.creator}">
+                               <span class="fas fa-pen" aria-hidden="true"></span> Edit
+                        </a>
+
+                        <a th:href="@{'/question/delete/' + ${question.id}}" class="community-menu"
+                           th:if="${session.user != null && session.user.id == question.creator}" onclick="return confirm('Delete?');">
+                               <span class="far fa-trash-alt" aria-hidden="true"></span> Delete
+                        </a>
+
+                        </span>
+                        <hr>
+
+                        <div id="markdown" th:data-id="${question.description}"></div>
+                        <script>
+                            var tmp = $('#markdown').attr("data-id");
+                            document.getElementById('markdown').innerHTML =
+                                marked(tmp);
+                        </script>
+                        <div style="height: 100px;"></div>
+                        <div>
+                            <span th:each="tag : ${question.tag.split(';')}">
+                                <span class="badge badge-info" th:text="${tag}" style="margin-left: 5px;"></span>
+                            </span>
+
+
+                        </div>
+                        <hr>
+
+
+                        <h5 style="margin-left: 5px;margin-top: 20px;">
+                            <span th:text="${question.commentCount}"></span> Replies
+                        </h5>
+
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons" style="margin-top: 10px;">
+                            <label class="btn btn-light btn-sm active" onClick="localRefresh()">
+                                <input type="radio" name="options" id="option1" autocomplete="off" checked> <i class="fa fa-calendar"></i> order by date
+                            </label>
+                            <label class="btn btn-light btn-sm" style="margin-left: 15px;" onClick="localRefreshByLike()">
+                                <input type="radio" name="options" id="option2" autocomplete="off" > <i class="fa fa-thumbs-o-up"></i> order by likes
+                            </label>
+                        </div>
+
+                        <hr>
+                        <div id="comment_list">
+                        <div class="media comments" th:each="comment:${comments}" th:fragment="comment_list">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="mr-3 avatar-list rounded" th:src="${comment.user.avatarUrl}"
+                                         alt="Generic placeholder image">
+                                </a>
+                            </div>
+                            <div class="media-body" th:id="${'comment-body-' + comment.id}">
+                                <div>
+                                    <h6 class="media-heading">
+                                        <span th:text="${comment.user.name}"></span>
+                                        <a th:href="@{'/comment/delete/' + ${comment.id} + '?question='+${question.id}}" class="community-menu"
+                                           th:if="${session.user != null && session.user.id == comment.getCommentator()}" onclick="return confirm('Delete Comment?');">
+                                            <span class="far fa-trash-alt" aria-hidden="true"></span> Delete
+                                        </a>
+                                    </h6>
+                                </div>
+                                <div th:text="${comment.content}"></div>
+
+                                <div style="margin-top:10px;">
+                                    <span th:text="${#dates.format(comment.gmtCreate, 'yyyy-MM-dd HH:mm')}" style="font-size: 0.8rem; color:#999;"></span>
+                                    <button type="button" class="btn btn-light btn-sm" style="font-size: .6rem; margin-left: 10px;" th:id="${'like-' + comment.id}" th:data-btn="${comment.getLikeCount()}" onclick="like(this)"><i class="fa fa-thumbs-o-up"></i> <span th:id="${'countlike-' + comment.id}" th:text="${comment.getLikeCount()}"></span></button>
+                                    <button type="button" class="btn btn-light btn-sm" style="font-size: .6rem; margin-left: 10px;" th:id="${comment.id}"
+                                            onclick="shine(this)" data-toggle="collapse" th:data-target="${'#comment-' + comment.id}"
+                                            aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-comments-o"></i> Reply  <span th:text="${comment.getCommentCount()}"></span></button>
+                                </div>
+
+                                <!-- Secondary Comments -->
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div style="margin-top: 15px;"></div>
+                                    <div class="collapse" th:id="${'comment-' + comment.id}" style="margin-top: 5px;">
+                                        <div class="card card-body" th:id="${'card-' + comment.id}">
+                                            <div>
+                                                <input type="text" class="form-control" placeholder="Fast Reply" th:id="${'second_comment-' + comment.id}">
+                                                <button type="button" class="btn btn-warning btn-sm" style="float:right; margin-top: 10px;" onclick="comment(this)" th:data-id="${comment.id}"><i class="fa fa-reply"></i> reply</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        </div>
+
+
+                        <!--Reply Area-->
+                        <div class="media" style="margin-top: 60px;">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img th:if="${session.user != null}" class="mr-3 avatar-list rounded" th:src="${session.user.avatarUrl}"
+                                         alt="Generic placeholder image">
+                                    <img th:if="${session.user == null}" class="mr-3 avatar-list rounded" src="/img/user.png"
+                                         alt="Generic placeholder image">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <h6 class="media-heading">
+                                    <span th:if="${session.user != null}" th:text="${session.user.name}"></span>
+                                    <span th:if="${session.user == null}" th:text="${'Guest'}"></span>
+                                </h6>
+                            </div>
+                        </div>
+                        <!-- Text Area -->
+                        <div class="form-group">
+                            <input type="hidden" id="question_id" th:value="${question.id}">
+                            <textarea class="form-control comment-form" rows="6" id="comment_content" minlength="15" maxlength="5000"
+                                      placeholder="Please reply with at least 15 characters and no more than 5000 characters."></textarea>
+                            <button type="button" class="btn btn-success btn-comment" onclick="post();">Comment</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Area -->
+
+                <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <h5>Proposer</h5>
+                        <div class="media" style="margin-top: 15px;">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="mr-3 avatar-list rounded" th:src="${question.user.avatarUrl}"
+                                         alt="Generic placeholder image">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <h6 class="media-heading">
+                                    <span th:text="${question.user.name}"></span>
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <a href="https://github.com/marketplace/azure-pipelines" target="_blank">
+                            <img class="img-thumbnail" src="/img/ads.png" style="margin-left: -7px; max-width: 250px;">
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <h6>Related Questions</h6>
+                        <ul class="question-related">
+                            <li th:each="related : ${relatedQuestions}" style="margin-top: 7px;">
+                                <a th:href="@{'/question/' + ${related.id}}" th:text="${related.title}" class="ex1"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:insert="~{footer :: footer}"></div>
+
+</body>
+</html>
