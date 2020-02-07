@@ -10,9 +10,9 @@
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL=""
-                        userId=""
-                        password="">
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/db_test?serverTimezone=GMT%2B8"
+                        userId="your_database_username"
+                        password="your_database_password">
         </jdbcConnection>
 
         <javaTypeResolver >
