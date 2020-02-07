@@ -1,65 +1,55 @@
-# coderuci
-Quora-like spring boot project
+# CoderUCI
+<p align="center">
+  <img src="https://github.com/dabaitudiu/coderuci-public/blob/master/images/logo-1.png"/>
+</p>
 
-```
-33 : Finish Problem Updates
-    
-     Flow: 1. imagine, if we click "edit' icon, the web page should navigate to /publish/id
-           2. Thus, go to QuestionController, we find there is no routing method for "/publish/{id}, thus we create one.
-           3. Because the question has already existed, we can retrieve its information from the database,
-              using the sentence "select * from question where id = #{id}"
-           4. However, because there needs to be a medium between controller level and mapper level, thus we use the QuestionDTO
-              to finish this process.
-           5. Looking downwards in the same file, we copy the "model.addAttributes" of questions features,
-              which are passed by posting in the original publish method.
-           6. Later, we can find a same problem as User login before, which is : every time we edit the question,
-              we need to update it, rather than insert a new one. Thus, in the original 'postPublish' method, we should
-              change the 'createQuestion' method to 'createOrUpdate' method.
-           7. However, to update, we need to identify the question using its id, whereas there is no id
-              passed through the postPublish method. (only title, description, tag). Thus, we need to add an extra parameter
-              in the same form as the other three. Meanwhile, in the HTML file, we to add a hidden input contains value id, 
-              which will be passed in with values if we are doing an update, and null (or whatever) if we just do an insertion.
-              In the createOrUpdate method, we will create a new question and generate an id if we are doing the insertion process.
-           8. Debug, all done.
+<p align="center">
+  <img src="https://img.shields.io/github/license/dabaitudiu/coderuci-public"/>
+  <img src="https://img.shields.io/librariesio/github/dabaitudiu/coderuci-public"/>
+</p>
 
 
+CoderUCI is a an MIT-licensed open source project. It is a question and answer site designed for programmers' discussions. Constructed by Spring Boot + MyBatis + MySQL.
 
-     Question: Every time we change something in the database,
-               we can use fly migrate to store the scripts and become convenient.
-               However, if we change some thing (e.g. add attributes to some tables),
-               we must change MyBatis translation (or, the sql sentences in the mapper)
-               Are there any easier way to do this?
+## Introduction
+
+#### Home Page
+When visiting the home page, you can have an overview of proposed questions by the users. Every media thumbnails are consists of the questions information: proposer, question content, views, etc. Every question is classified by a tag that shows in the light-blue badge so that you can have a fast and intuitive understanding of the question. Your may also notice the trend of popular topics on the right side.
+<p align="center">
+  <img src="https://github.com/dabaitudiu/coderuci-public/blob/master/images/index.gif"/>
+</p>
+
+#### GitHub Oauth
+This site currently only supports login as a github user. Simply click the signin button on the top-right corner, it will authorize you and redirect you back to the index page. After signing in, you will be able to publish or reply or comment questions.
+<p align="center">
+  <img src="https://github.com/dabaitudiu/coderuci-public/blob/master/images/oauth.gif"/>
+</p>
 
 
-34:
-mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
+#### View and Comment Questions
+After clicking a specific question, you will be forward to the question detail page, where you can view it in the rendered markdown form. You can rank the answers by date/likes. Of course, you can answer the questions. The site also supports secondary comments, where you can have furthur discussions.
+<p align="center">
+  <img src="https://github.com/dabaitudiu/coderuci-public/blob/master/images/comment.gif"/>
+</p>
 
+#### Publish Questions
+Clicking the Publish Button, you will be able to publish your questions. The editor is embedded with a markdown editor, so feel free to add codes!
+<p align="center">
+  <img src="https://github.com/dabaitudiu/coderuci-public/blob/master/images/publish.gif"/>
+</p>
 
-35. 
-White Page: Override default 'BasicController'
-Controller Advice & Exception Handler to process all events exceptions. 
-Excpetion should be defined as Runtime Exception, so that it won't affect our other codes.
+#### Delete or Edit Your Questions
+If you wish to delete/edit your questions, simply click the buttons around the title. But of course, you will only be able to do the operations to your own articles.
+<p align="center">
+  <img src="https://github.com/dabaitudiu/coderuci-public/blob/master/images/delete_edit.gif"/>
+</p>
 
-CustomizeExceptionHandler is a class that intercept exceptions add pass info to a model
-The above handles the situation that exception happens passively.
+#### Check Notifications and Published Questions
+This site supports notification functions. If someone replied to your questions/comments, you will be notified. Unread notifications will be marked with a yellow badge indicating its status. In addition, you can view all the questions you have published in the 'My Questions' tab.
+<p align="center">
+  <img src="https://github.com/dabaitudiu/coderuci-public/blob/master/images/notification.gif"/>
+</p>
 
-We also need an error controller that directly points to the error routing.
-
-36. 
-Viewcount: function executed in the question controller(means every time visited, then increase)
-However, we may face the situation that many people visiting a question at the same time,
-and will cause wrong calculation to the counting. Thus we rewrite a mapper function as viewcount = viewcount + 1 
-directly in a database operation, rather than get the view data, plus one, and save back.
-
-37. Create a Comment Controller.
-Receive a comment JSON from front end, post to the method in comment controller
-
-41. Sign in successfully and redirect to the page you leave.
-
-42. I SUCCEED!!!!! Partially Refresh the comment page!
-
-44. Manage the toggle button. Bootstrap 4 sample : change the given button to our reply button, bond with id (th:id, th:data-target)
-    Meanwhile add a shine css using jquery, when click change btn-light to btn-info
-
-45. Secondary comment implemented.
-```
+## Efficient Features
+#### MyBatis Generator
+MyBatis framework provides friendly interaction between user and database operations. A simple usage of mybatis is to add ```@Mapper```annotations to a mapper class that contacts with the database tables, then a person should add SQL sentences to retrieve expected sentences. However, every time if we modifies the database, or modified our methods that handling data, we need to modify the SQL sentences as well. With the assistance of mybatis generator, we can let the mybatis generate mapper according to the database automatically, and provides an encapsulated api for us to handle database operations without using SQL sentences. This is crucial to a project that needs long term maintainence. 
