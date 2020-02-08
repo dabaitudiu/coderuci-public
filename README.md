@@ -9,7 +9,9 @@
 </p>
 
 
-CoderUCI is a an MIT-licensed open source project. It is a question and answer site designed for programmers' discussions. Constructed by Spring Boot + MyBatis + MySQL. https://www.coderuci.com
+CoderUCI is a an MIT-licensed open source project. It is a question and answer site designed for programmers discussions. In the website, users can post questions, generate tags, edit with markdown, make comments, search questions and receive notifications. <hr>
+- Keywords: Java, Spring Boot, Maven, MyBatis, MySQL, Flyway
+- ALpha version: https://www.coderuci.com
 
 ## 1.Introduction
 
@@ -82,5 +84,98 @@ In order to pass the cookie of a signed in user, a session interceptor is embedd
 #### 2-6 Spring Boot Task Scheduler 
 In order to rank the popular tags, we need to make statistics of questions based on their tags, views, likes and comments. However, if this ranking procedure is processed every time a user visits the site, it is very inefficient, because the server will execute commands in the form : ```sql select tag from question order by popular desc```. If we want to explain the 'popular' index further, we have to spend more time handling this operation. Using a task scheduler will help us a lot. We will schedule a check of current popular index every N minutes, then update the results. This will saves us much time if the influx is high.
 
+## 3.Install
 
+### 3-0. Ideal Installation
+After clone the project, simply do the following command:
+```
+sudo apt install maven
+mvn clean compile package
+```
+You will see a BUILD SUCCESS reminder if it succeeds. You can then start the project:
+```
+mvn spring-boot:run
+```
+If you encounter problems in any form, please move on to the following manual installation.
+
+### 3-1. Initialize MySQL database
+- a. Install MySQL on the server and create a user:
+```
+sudo apt update
+sudo apt install mysql-server
+> sudo mysql
+> CREATE USER 'your_user_name'@'%' IDENTIFIED BY 'your_password';
+```
+- b. create and run a bash file that execute all db scripts (db.migration/):
+```
+for sql_file in `ls /path/to/directory`; do mysql -uUSER -pPASSWORD DATABASE < $sql_file ; done
+```
+Please verify in the commandline that you can access the database tables with your defined user.
+- c. Modify ```application.properties```
+```
+github.client.id=your_github_app_id
+github.client.secret=your_github_app_secret
+github.redirect.uri=http://your_ip_or_localhost/callback
+
+spring.datasource.url=jdbc:mysql://your_ip_or_localhost:3306/db_test?serverTimezone=GMT%2B8
+spring.datasource.username=your_database_username
+spring.datasource.password=your_database_password
+```
+- d. Try ```mvn spring-boot:run```
+If no errors, congrats! Otherwise you can comment all the lines in the application.properties regarding the database, and check again. If it works, it means the database authentication failed. Possible reason includes the following :
+```
+com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+ 
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:174) ~[mysql-connector-java-8.0.18.jar:8.0.18]
+```
+To handle this problem, modify the file:
+```
+/etc/mysql/mysql.conf.d/mysqld.cnf
+. . .
+lc-messages-dir = /usr/share/mysql
+skip-external-locking
+#
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+bind-address            = 127.0.0.1
+. . .
+```
+Change the bind-address to 0.0.0.0 so that the database can be visited by ip other than localhost. 
+If question still exists, I suggest visiting https://stackoverflow.com/questions/6865538/solving-a-communications-link-failure-with-jdbc-and-mysql, where I get my solution.
+
+#### 4. Run
+```
+mvn spring-boot:run
+or:
+nohup mvn spring-boot:run & 
+if you want to keep it running even if you close the terminal
+```
+## 4. Maintainence 
+### 4-1 Database Modification
+If you wish to make changes to the database, please do the following every time you make changes and never make direct changes to the database. <br> Write your dbscripts and save as ```V?__Modify_table.sql```, '?' is positive numbers following existing sequences. Then run the following scripts in the termainl:
+```
+flyway:migrate
+```
+### 4-2 Additional Mapper to database tables
+Add the following block to the file ```generatorConfig.xml```
+```
+<table tableName="your_table_name" domainObjectName="Model_name"></table>
+```
+Then, run the following command in the terminal:
+```
+mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
+```
+
+## 5. Future Works
+- Backstage/Admin page. Current operations handling database information can only be finished via terminal. It is in urgent need of a backstage system.
+- Index Page: Choices for ranking by dates/likes/7days popular/30 days popular
+- Markdown Editor: Support upload image
+- Signup: Support user sign up within this site; add more support for platform like goole, linkedin, etc.
+- Statistics & Analytics: Provide intuitive results for the site's information. I plan to use Google Analytics.
+- Notifications from site manager: Alert and warn inappropriate behavior via notifications.
+- Discussion Room: Able to hold a live discussion.
+
+## 6. License
+[MIT License](https://github.com/dabaitudiu/coderuci-public/blob/master/LICENSE) © Zhenhan Li. University of California, Irvine. 
 
